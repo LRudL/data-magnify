@@ -3,13 +3,13 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f0f0f0;
-    overflow: hidden; /* Prevent body from scrolling */
+    overflow: auto; /* Change from hidden to auto */
 }
 
 .container {
     display: flex;
-    height: 100vh; /* Use viewport height instead of min-height */
-    overflow: hidden; /* Prevent container from scrolling */
+    height: 100vh;
+    overflow: auto; /* Change from hidden to auto */
 }
 
 .main {
@@ -18,7 +18,7 @@ body {
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible; /* Change from hidden to visible */
 }
 
 .sidebar {
@@ -37,6 +37,8 @@ body {
 
 .prompt-box {
     margin-bottom: 20px;
+    position: relative; /* Add this */
+    overflow: visible !important; /* Add this */
 }
 
 .answer-boxes {
@@ -74,11 +76,20 @@ textarea {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    resize: none;
+    /* Remove the resize: none from here */
 }
 
 #prompt {
-    resize: vertical;
+    width: 100%;
+    resize: vertical !important; /* Change from 'both' to 'vertical' */
+    min-height: 100px;
+    overflow: auto;
+    position: relative;
+    z-index: 1;
+}
+
+#prompt-input {
+    resize: vertical !important;
 }
 
 #answer-a, #answer-b {
@@ -335,4 +346,25 @@ ul {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+}
+
+.compare-table {
+    width: 100%;
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden; /* Change from auto to hidden */
+}
+
+.compare-table th,
+.compare-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    /* Remove min-width to allow squeezing */
+}
+
+.compare-table thead {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
 }
