@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface Highlight {
+export interface Highlight {
     start: number;
     end: number;
     text: string;
@@ -13,10 +13,48 @@ interface HighlightedTextProps {
     highlights: Highlight[];
 }
 
+// Utility functions for highlighting
+export const highlightUtils = {
+    // Find positions of a quote in text
+    findQuotePositions: (text: string, quote: string): [number, number] => {
+        const cleanQuote = quote.replace(/^["']|["']$/g, '');
+        const index = text.indexOf(cleanQuote);
+        return index >= 0 ? [index, index + cleanQuote.length] : [-1, -1];
+    },
+
+    // Generate a consistent color based on a string
+    getConsistentColor: (name: string): string => {
+        // Generate a hash of the name
+        const hash = name.split('').reduce((acc, char) => {
+            return char.charCodeAt(0) + ((acc << 5) - acc);
+        }, 0);
+        
+        // Use the hash to generate HSL color with fixed saturation and lightness
+        const hue = Math.abs(hash % 360);
+        return `hsla(${hue}, 70%, 70%, 0.3)`;
+    },
+
+    // Generate highlights for a text based on quotes
+    generateHighlights: (quotes: Array<{ quote: string; comment?: string | null }>, text: string, colorKey: string): Highlight[] => {
+        const color = highlightUtils.getConsistentColor(colorKey);
+        return quotes
+            .map((quote): Highlight | null => {
+                const [start, end] = highlightUtils.findQuotePositions(text, quote.quote);
+                if (start === -1) return null;
+
+                return {
+                    start,
+                    end,
+                    text: quote.quote,
+                    color,
+                    tooltip: quote.comment || undefined
+                };
+            })
+            .filter((h): h is Highlight => h !== null);
+    }
+};
+
 export const HighlightedText: React.FC<HighlightedTextProps> = ({ text, highlights }) => {
-    // Add debug logging
-    console.log('HighlightedText rendering with:', { text: text.slice(0, 50), highlightCount: highlights.length });
-    
     if (!highlights || highlights.length === 0) {
         return <span>{text}</span>;
     }
@@ -37,16 +75,18 @@ export const HighlightedText: React.FC<HighlightedTextProps> = ({ text, highligh
             );
         }
 
-        // Add highlighted text with debug class
+        // Add highlighted text
         segments.push(
             <span
                 key={`highlight-${index}`}
                 style={{ 
                     backgroundColor: highlight.color,
-                    display: 'inline',  // Force inline display
-                    padding: '2px 0',   // Add some padding
+                    display: 'inline',
+                    padding: '2px 0',
+                    cursor: 'help',
+                    position: 'relative',
                 }}
-                title={highlight.tooltip}
+                data-tooltip={highlight.tooltip}
                 className="highlighted-text"
             >
                 {text.slice(highlight.start, highlight.end)}

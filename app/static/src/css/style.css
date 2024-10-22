@@ -62,6 +62,7 @@ body {
     white-space: pre-wrap; /* Add this */
     font-family: inherit;  /* Add this */
     line-height: 1.5;     /* Add this */
+    position: relative; /* Add this */
 }
 
 .answer-box textarea {
@@ -301,6 +302,27 @@ ul {
 
 .highlighted-text:hover {
     filter: brightness(0.9);
+}
+
+/* Create a new tooltip class */
+.highlighted-text[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: fixed;
+    /* Remove top/bottom positioning and use viewport centering */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: normal;
+    max-width: 200px;
+    width: max-content;
+    word-wrap: break-word;
+    pointer-events: none;
+    box-sizing: border-box;
 }
 
 .visually-hidden {

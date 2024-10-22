@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CollapsibleDiv } from './Components';
+import { highlightUtils, Highlight } from './HighlightedText';
 
 // Define all possible helper types
 type HelperType = 'summarize' | 'compare' | 'criteria_quotes' | string;
@@ -41,8 +42,8 @@ interface HelperContentDisplayProps {
     content: SummarizeContent | CompareItem[] | CriteriaQuote | any;
     answerA?: string;
     answerB?: string;
-    setHighlightsA?: (highlights: Array<{ start: number; end: number; text: string; color: string; tooltip?: string; }>) => void;
-    setHighlightsB?: (highlights: Array<{ start: number; end: number; text: string; color: string; tooltip?: string; }>) => void;
+    setHighlightsA?: (highlights: Array<Highlight>) => void;
+    setHighlightsB?: (highlights: Array<Highlight>) => void;
 }
 
 interface CompareRendererProps {
@@ -95,45 +96,21 @@ const CriteriaQuotesRenderer: React.FC<{
     content: CriteriaQuote; 
     answerA: string; 
     answerB: string;
-    setHighlightsA?: (highlights: Array<{ start: number; end: number; text: string; color: string; tooltip?: string; }>) => void;
-    setHighlightsB?: (highlights: Array<{ start: number; end: number; text: string; color: string; tooltip?: string; }>) => void;
+    setHighlightsA?: (highlights: Array<Highlight>) => void;
+    setHighlightsB?: (highlights: Array<Highlight>) => void;
 }> = ({ content, answerA, answerB, setHighlightsA, setHighlightsB }) => {
     const criteriaNames = Object.keys(content || {});
     const [selectedCriterion, setSelectedCriterion] = useState(criteriaNames[0] || '');
 
-    // Function to find quote positions in text
-    const findQuotePositions = (text: string, quote: string): number[] => {
-        // Remove first and last quotes if they exist
-        const cleanQuote = quote.replace(/^["']|["']$/g, '');
-        const index = text.indexOf(cleanQuote);
-        return index >= 0 ? [index, index + cleanQuote.length] : [-1, -1];
-    };
-
-    // Generate highlights for both texts
-    const generateHighlights = (quotes: Quote[], text: string) => {
-        return quotes.map((quote, index) => {
-            const [start, end] = findQuotePositions(text, quote.quote);
-            if (start === -1) return null;
-
-            return {
-                start,
-                end,
-                text: quote.quote,
-                color: `hsla(${(index * 60) % 360}, 70%, 70%, 0.3)`, // Generate different colors
-                tooltip: quote.comment || undefined
-            };
-        }).filter((h): h is NonNullable<typeof h> => h !== null);
-    };
-
-    // Update useEffect to set highlights when criterion changes
+    // Update highlights when criterion changes
     useEffect(() => {
         const answers: CriteriaQuoteContent = content[selectedCriterion] || {
             'Text A': [],
             'Text B': []
         };
 
-        const highlightsA = generateHighlights(answers['Text A'], answerA);
-        const highlightsB = generateHighlights(answers['Text B'], answerB);
+        const highlightsA = highlightUtils.generateHighlights(answers['Text A'], answerA, selectedCriterion);
+        const highlightsB = highlightUtils.generateHighlights(answers['Text B'], answerB, selectedCriterion);
 
         setHighlightsA?.(highlightsA);
         setHighlightsB?.(highlightsB);
