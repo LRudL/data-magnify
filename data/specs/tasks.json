@@ -1,0 +1,32 @@
+[
+    {
+        "task_name": "ml_experiment_grading",
+        "criteria": [
+            "**Detail-level / shovel-readiness**: is the experiment proposal detailed enough to be ready for implementation?",
+            "**Tractability**: is the experiment proposal something that a good PhD student equipped with compute on the level of 1 A100 could implement within a week, while spending not much more than $500?",
+            "**Theory of change / interestingess**: is there something clear and interesting that this experiment would reveal? Does the experiment proposed actually answer the motivation / hypothesis?",
+            "**Structure**: is the answer structured well, and does it avoid verbosity?",
+            "**Accuracy**: are any statements or claims made accurate? Does the answer avoid any misleading claims or implications about machine learning?"
+        ],
+        "prompts": [
+            [
+                {
+                "role": "user",
+                "content": "Propose a machine learning experiment that tests some new approach or tool for scalable oversight. For example, you might investigate failure modes of RLHF, methods like AI safety via debate, weak-to-strong debate, or tools that could be given to humans to improve their ability to annotate training data, judge debates, etc. Your experiment should have a clear motivation / hypothesis that it tries to answer and that meaningfully addresses some concern or unknown with scalable oversight methods, it should be prototypable by a good PhD student within a week with not much more than $500 and/or 1 A100 worth of compute, and it should be detailed enough that someone could go an implement it based on the instructions you give (but do not write code) assuming that they are a competent programmer and can solve engineering challenges but not theoretical/direction-related ones. You should structure your answer clearly, avoiding unnecessary verbosity."
+                }
+            ]
+        ],
+        "answerers": [
+            {
+                "model": "claude-3-5-sonnet-20240620",
+                "kwargs": {
+                }
+            },
+            {
+                "model": "gpt-4o-mini-2024-07-18",
+                "kwargs": {
+                }
+            }
+        ]
+    }
+]
